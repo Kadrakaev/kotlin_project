@@ -3,44 +3,73 @@ package com.example.app_kotlin_kadrakaev
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.app_kotlin_kadrakaev.ui.theme.App_kotlin_kadrakaevTheme
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            App_kotlin_kadrakaevTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
+            NotesApp()
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun NotesApp() {
+    var notes by remember { mutableStateOf(listOf<String>()) }
+    var noteText by remember { mutableStateOf("") }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    App_kotlin_kadrakaevTheme {
-        Greeting("Android")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Заметки",
+            fontSize = 24.sp,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        Column(modifier = Modifier.weight(1f)) {
+            notes.forEach { note ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    elevation = 4.dp
+                ) {
+                    Text(
+                        text = note,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TextField(
+                value = noteText,
+                onValueChange = { noteText = it },
+                label = { Text("Введите заметку") },
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(onClick = {
+                if (noteText.isNotBlank()) {
+                    notes = notes + noteText
+                    noteText = ""
+                }
+            }) {
+                Text("Добавить")
+            }
+        }
     }
 }
